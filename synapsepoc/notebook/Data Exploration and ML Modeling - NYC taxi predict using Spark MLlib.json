@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "5a2dd2c0-c1a2-4239-9340-6a643bc430b2"
+				"spark.autotune.trackingId": "5b67b5a3-90dc-47e3-a2e8-40d3b9307f47"
 			}
 		},
 		"metadata": {
@@ -41,8 +41,8 @@
 				},
 				"sparkVersion": "2.4",
 				"nodeCount": 5,
-				"cores": 4,
-				"memory": 28,
+				"cores": 8,
+				"memory": 56,
 				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
@@ -285,7 +285,7 @@
 					"datestamp = datetime.now().strftime('%m-%d-%Y-%s');\n",
 					"fileName = \"lrModel_\" + datestamp;\n",
 					"logRegDirfilename = fileName;\n",
-					"lrModel.save(logRegDirfilename)\n",
+					"##lrModel.save(logRegDirfilename)\n",
 					"\n",
 					"## Predict tip 1/0 (yes/no) on the test dataset, evaluation using AUROC\n",
 					"predictions = lrModel.transform(test_data_df)\n",
