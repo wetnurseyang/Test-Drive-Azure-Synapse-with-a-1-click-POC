@@ -511,7 +511,7 @@
 					},
 					"SynapseWorkspaceName": {
 						"type": "string",
-						"defaultValue": "bryiwqal2hbjzaoupocws1.dev.azuresynapse.net"
+						"defaultValue": "bryiwqal2hbjzaoupocws1.sql.azuresynapse.net"
 					},
 					"SQLDedicatedPoolName": {
 						"type": "string",
@@ -1220,7 +1220,8 @@
 						"dataFlowProperties": {
 							"computeType": "General",
 							"coreCount": 8,
-							"timeToLive": 0
+							"timeToLive": 0,
+							"cleanup": true
 						}
 					}
 				},
