@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 2",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP (100) [Book_Id]\n,[ISBN]\n,[ISBN13]\n,[Title]\n,[Author]\n,[Author_l-f]\n,[Additional_Authors]\n,[Average_Rating]\n,[Publisher]\n,[Binding]\n,[Number_of_Pages]\n,[Year_Published]\n,[Original_Publication_Year]\n FROM [default].[dbo].[books]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "default",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
