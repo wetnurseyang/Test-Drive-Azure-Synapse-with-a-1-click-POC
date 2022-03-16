@@ -5,6 +5,9 @@
 		"workspaceName": {
 			"value": "bryiwqal2hbjzaoupocws1"
 		},
+		"Linked_bryanyblob_accountKey": {
+			"value": ""
+		},
 		"TripFaresSynapseAnalyticsLinkedService_connectionString": {
 			"value": ""
 		},
@@ -13,6 +16,9 @@
 		},
 		"HttpServerTripFareDataLinkedService_properties_typeProperties_url": {
 			"value": "https://raw.githubusercontent.com/Azure/Test-Drive-Azure-Synapse-with-a-1-click-POC/main/tripDataAndFaresCSV/fares-data.csv"
+		},
+		"Linked_bryanyblob_properties_typeProperties_url": {
+			"value": "https://bryanyblob.dfs.core.windows.net"
 		},
 		"TripFaresDataLakeStorageLinkedService_properties_typeProperties_url": {
 			"value": "@{concat('https://',linkedService().datalakeAccountName,'.dfs.core.windows.net')}"
