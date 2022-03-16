@@ -1,0 +1,17 @@
+{
+	"name": "Polybase_BulkLoad",
+	"properties": {
+		"content": {
+			"query": "IF NOT EXISTS (SELECT * FROM sys.objects O JOIN sys.schemas S ON O.schema_id = S.schema_id WHERE O.NAME = 'books' AND O.TYPE = 'U' AND S.NAME = 'dbo')\nCREATE TABLE dbo.books\n\t(\n\t [Book_Id] nvarchar(4000),\n\t [ISBN] nvarchar(4000),\n\t [ISBN13] nvarchar(4000),\n\t [Title] nvarchar(4000),\n\t [Author] nvarchar(4000),\n\t [Author_l-f] nvarchar(4000),\n\t [Additional_Authors] nvarchar(4000),\n\t [Average_Rating] nvarchar(4000),\n\t [Publisher] nvarchar(4000),\n\t [Binding] nvarchar(4000),\n\t [Number_of_Pages] nvarchar(4000),\n\t [Year_Published] nvarchar(4000),\n\t [Original_Publication_Year] nvarchar(4000)\n\t)\nWITH\n\t(\n\tDISTRIBUTION = ROUND_ROBIN,\n\t CLUSTERED COLUMNSTORE INDEX\n\t -- HEAP\n\t)\nGO\n\n--Uncomment the 4 lines below to create a stored procedure for data pipeline orchestration​\n--CREATE PROC bulk_load_books\n--AS\n--BEGIN\nCOPY INTO dbo.books\n(Book_Id 1, ISBN 2, ISBN13 3, Title 4, Author 5, \"Author_l-f\" 6, Additional_Authors 7, Average_Rating 8, Publisher 9, Binding 10, Number_of_Pages 11, Year_Published 12, Original_Publication_Year 13)\nFROM 'https://bryanyblob.dfs.core.windows.net/test/output.parquet'\nWITH\n(\n\tFILE_TYPE = 'PARQUET'\n\t,MAXERRORS = 0\n)\n--END\nGO\n\nSELECT * FROM dbo.books\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "bryiwqal2hbjzaoupocws1p1",
+				"poolName": "bryiwqal2hbjzaoupocws1p1"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
