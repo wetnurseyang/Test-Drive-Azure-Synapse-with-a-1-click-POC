@@ -1368,6 +1368,26 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 2')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT TOP (100) [Book_Id]\n,[ISBN]\n,[ISBN13]\n,[Title]\n,[Author]\n,[Author_l-f]\n,[Additional_Authors]\n,[Average_Rating]\n,[Publisher]\n,[Binding]\n,[Number_of_Pages]\n,[Year_Published]\n,[Original_Publication_Year]\n FROM [default].[dbo].[books]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "default",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Create Lake DB Table')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
@@ -1388,7 +1408,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "df32ec4c-9ba2-44cf-aec1-906d452045a7"
+						"spark.autotune.trackingId": "7ebf1209-e12b-4fa9-be06-0680f61333ef"
 					}
 				},
 				"metadata": {
@@ -1413,8 +1433,7 @@
 						"sparkVersion": "2.4",
 						"nodeCount": 5,
 						"cores": 8,
-						"memory": 56,
-						"automaticScaleJobs": false
+						"memory": 56
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -1483,7 +1502,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "5de5b6be-05eb-4ff4-b0bc-36cc48774eec"
+						"spark.autotune.trackingId": "5b67b5a3-90dc-47e3-a2e8-40d3b9307f47"
 					}
 				},
 				"metadata": {
@@ -1508,15 +1527,13 @@
 						"sparkVersion": "2.4",
 						"nodeCount": 5,
 						"cores": 8,
-						"memory": 56,
-						"automaticScaleJobs": false
+						"memory": 56
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "markdown",
-						"metadata": {},
 						"source": [
 							"# Predict NYC Taxi Tips using Spark ML and Azure Open Datasets\n",
 							"\n",
@@ -1529,7 +1546,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"import matplotlib.pyplot as plt\n",
 							"\n",
@@ -1552,7 +1568,6 @@
 					},
 					{
 						"cell_type": "markdown",
-						"metadata": {},
 						"source": [
 							"## Ingest Data¶ \n",
 							"\n",
@@ -1561,7 +1576,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Import NYC yellow cab data from Azure Open Datasets\n",
 							"from azureml.opendatasets import NycTlcYellow\n",
@@ -1580,7 +1594,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"#To make development easier, faster and less expensive downsample for now\n",
 							"sampled_taxi_df = nyc_tlc_df.sample(True, 0.001, seed=1234)"
@@ -1590,7 +1603,6 @@
 					},
 					{
 						"cell_type": "markdown",
-						"metadata": {},
 						"source": [
 							"## Exploratory Data Analysis\n",
 							"\n",
@@ -1599,7 +1611,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"#The charting package needs a Pandas dataframe or numpy array do the conversion\n",
 							"sampled_taxi_pd_df = sampled_taxi_df.toPandas()\n",
@@ -1634,7 +1645,6 @@
 					},
 					{
 						"cell_type": "markdown",
-						"metadata": {},
 						"source": [
 							"## Data Prep and Featurization\n",
 							"\n",
@@ -1646,7 +1656,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"taxi_df = sampled_taxi_df.select('totalAmount', 'fareAmount', 'tipAmount', 'paymentType', 'rateCodeId', 'passengerCount'\\\n",
 							"                                , 'tripDistance', 'tpepPickupDateTime', 'tpepDropoffDateTime'\\\n",
@@ -1669,7 +1678,6 @@
 					},
 					{
 						"cell_type": "markdown",
-						"metadata": {},
 						"source": [
 							"## Data Prep and Featurization Part 2\n",
 							"\n",
@@ -1681,7 +1689,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"taxi_featurised_df = taxi_df.select('totalAmount', 'fareAmount', 'tipAmount', 'paymentType', 'passengerCount'\\\n",
 							"                                                , 'tripDistance', 'weekdayString', 'pickupHour','tripTimeSecs','tipped'\\\n",
@@ -1698,7 +1705,6 @@
 					},
 					{
 						"cell_type": "markdown",
-						"metadata": {},
 						"source": [
 							"## Encoding\n",
 							"\n",
@@ -1712,7 +1718,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# The sample uses an algorithm that only works with numeric features convert them so they can be consumed\n",
 							"sI1 = StringIndexer(inputCol=\"trafficTimeBins\", outputCol=\"trafficTimeBinsIndex\"); \n",
@@ -1728,7 +1733,6 @@
 					},
 					{
 						"cell_type": "markdown",
-						"metadata": {},
 						"source": [
 							"## Generation of Testing and Training Data Sets\n",
 							"Simple split, 70% for training and 30% for testing the model. Playing with this ratio may result in different models.\n",
@@ -1737,7 +1741,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Decide on the split between training and testing data from the dataframe \n",
 							"trainingFraction = 0.7\n",
@@ -1752,7 +1755,6 @@
 					},
 					{
 						"cell_type": "markdown",
-						"metadata": {},
 						"source": [
 							"## Train the Model\n",
 							"\n",
@@ -1761,7 +1763,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"## Create a new LR object for the model\n",
 							"logReg = LogisticRegression(maxIter=10, regParam=0.3, labelCol = 'tipped')\n",
@@ -1789,7 +1790,6 @@
 					},
 					{
 						"cell_type": "markdown",
-						"metadata": {},
 						"source": [
 							"## Evaluate and Visualize\n",
 							"\n",
@@ -1799,7 +1799,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"## Plot the ROC curve, no need for pandas as this uses the modelSummary object\n",
 							"modelSummary = lrModel.stages[-1].summary\n",
@@ -1813,6 +1812,41 @@
 						],
 						"outputs": [],
 						"execution_count": null
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/TestLakeDB')]",
+			"type": "Microsoft.Synapse/workspaces/databases",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"Ddls": [
+					{
+						"ActionType": "CREATE",
+						"OldEntity": null,
+						"NewEntity": {
+							"Origin": {
+								"Type": "SPARK"
+							},
+							"Properties": {
+								"IsSyMSCDMDatabase": true
+							},
+							"Name": "TestLakeDB",
+							"EntityType": "DATABASE",
+							"Source": {
+								"Provider": "ADLS",
+								"Location": "abfss://test@bryanyblob.dfs.core.windows.net/LakeDatabase",
+								"Properties": {
+									"FormatType": "csv",
+									"LinkedServiceName": "Linked_bryanyblob"
+								}
+							}
+						},
+						"Source": {
+							"Type": "SPARK"
+						}
 					}
 				]
 			},
@@ -1860,256 +1894,6 @@
 			"type": "Microsoft.Synapse/workspaces/managedVirtualNetworks",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/TestLakeDB')]",
-			"type": "Microsoft.Synapse/workspaces/databases",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"Ddls": [
-					{
-						"ActionType": "CREATE",
-						"OldEntity": null,
-						"NewEntity": {
-							"Origin": {
-								"Type": "SPARK"
-							},
-							"Properties": {
-								"IsSyMSCDMDatabase": true,
-								"DerivedModelDBInfo": "{\"ModelDirectives\":{\"BaseModel\":{\"Name\":\"Retail\",\"Version\":\"0.1.0\"}}}"
-							},
-							"Name": "TestLakeDB",
-							"EntityType": "DATABASE",
-							"Source": {
-								"Provider": "ADLS",
-								"Location": "abfss://lake-database@bryanyblob.dfs.core.windows.net/",
-								"Properties": {
-									"FormatType": "csv",
-									"LinkedServiceName": "Linked_bryanyblob"
-								}
-							}
-						},
-						"Source": {
-							"Type": "SPARK"
-						}
-					},
-					{
-						"ActionType": "CREATE",
-						"OldEntity": null,
-						"NewEntity": {
-							"Namespace": {
-								"DatabaseName": "TestLakeDB"
-							},
-							"Name": "Customer",
-							"Description": "A customer is an individual or legal entity that has or has purchased a product or service.\n\nA potential customer is an individual or legal entity that has the desire to acquire a product or service, the financial ability to pay for that product or service and is located in a location in which the product or service can be delivered to them.\n\nThe definition of 'customer' is of critical importance for every organization.    \n\nIt is the customer that is the focus of product planning, marketing, sales, service, reporting and analytics.    Without 'customer' there would be no need for the organization to exist since its purpose is to serve the customer and profit from that interaction.\n\nThe definition of 'customer' must be consistent with how customers exist and interact with the organization in the real world.  An artificial or conceptual definition of 'customer' that is not consistent with these two objectives is doomed to fail because the data will not be consistent with the definition and employees will not accept concepts or terms that are not consistent with what they see, know and how they interact with customers on a working basis.\n\nMicrosoft defines 'customer' to meet these objectives.    When we look out into the real world we see two dominant types of customers:  human beings and legal entities.     \n\nHuman beings are obviously male and female individuals of various ages, sex, demographics and a variety of similar dimensions that describe and define them who purchase products, good and services.    \n\nLegal entities are those legally-defined entities such as corporations, partnerships, non-profit organizations, government organizations etc. that purchase products, goods and services.\n\nThis view of 'customer' is consistent with the real world and consistent with how employees view and interact with customers.\n\nOf course, that is just the start of identifying, defining and understanding each type of 'customer'.     There is a great deal of detail, complexity and related data that can be used to define each type of customer to various levels of detail and different dimensions of information.\n\nMicrosoft implements these detailed concepts and related data via two distinct business area models that expand the coverage and complexity of each type of customer:\n\n-  INDIVIDUAL CUSTOMER Business Area Model\n-  LEGAL ENTITY CUSTOMER Business Area Model\n\nNote:\nEach of the Microsoft models - enterprise, business area or data warehouse - have a representative level of detail for the appropriate type of customer, which is a 'subset' of the total data available in the associated INDIVIDUAL CUSTOMER or LEGAL ENTITY CUSTOMER business area models..   Reference either of those models to expand the coverage or level of detail in each respective data model.\n\nThe actual customer implemented in each model depends upon the dominant use of customer for that industry.     \n\nFor example, in the pharmaceutical industry the customer is a legal entity, which represents another corporation, company, government organization etc. that purchases the pharmaceutical product and then distributes that product to the end-customer, which is an individual in a retail environment or a government-distribution scheme.    \n\nFor this example, the pharmaceutical models will have the legal entity customer represented but not the individual 'end customer' since that is represented in the appropriate retail industry models, which are a different offering.     \n\nOf course, the entire set of data available for a legal entity customer is contained in the associated LEGAL ENTITY CUSTOMER Business Area Model.   Reference the LEGAL ENTITY CUSTOMER Business Area Model to incorporate additional data that may be of relevance.\n\nIn many industries both types of customers are represented since a legal entity or individual can purchase products, goods or services and enter into contracts.    For these industries, both types of customers are represented by some of the more significant or relevant data derived from the associated LEGAL ENTITY or INDIVIDUAL CUSTOMER business area models.   These models can be used to expand the scope or level of detail in any of the enterprise, business area or data warehouse models.",
-							"EntityType": "TABLE",
-							"TableType": "EXTERNAL",
-							"Origin": {
-								"Type": "SPARK"
-							},
-							"StorageDescriptor": {
-								"Columns": [
-									{
-										"Name": "CustomerId",
-										"Description": "The unique identifier of a Customer.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "CustomerId"
-										},
-										"OriginDataTypeName": {
-											"TypeName": "long",
-											"IsComplexType": false,
-											"IsNullable": false,
-											"Properties": {
-												"HIVE_TYPE_STRING": "long"
-											}
-										}
-									},
-									{
-										"Name": "CustomerEstablishedDate",
-										"Description": "The date that the Customer relationship was established.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "CustomerEstablishedDate"
-										},
-										"OriginDataTypeName": {
-											"TypeName": "date",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Properties": {
-												"DateFormat": "YYYY-MM-DD",
-												"HIVE_TYPE_STRING": "date"
-											}
-										}
-									},
-									{
-										"Name": "CustomerTypeId",
-										"Description": "The unique identifier of a Customer Type.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "CustomerTypeId"
-										},
-										"OriginDataTypeName": {
-											"TypeName": "integer",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Properties": {
-												"HIVE_TYPE_STRING": "integer"
-											}
-										}
-									},
-									{
-										"Name": "ResponsibilityCenterId",
-										"Description": "The unique identifier of a Responsibility Center.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "ResponsibilityCenterId"
-										},
-										"OriginDataTypeName": {
-											"TypeName": "integer",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Properties": {
-												"HIVE_TYPE_STRING": "integer"
-											}
-										}
-									},
-									{
-										"Name": "LedgerId",
-										"Description": "The unique identifier of a Ledger.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "LedgerId"
-										},
-										"OriginDataTypeName": {
-											"TypeName": "integer",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Properties": {
-												"HIVE_TYPE_STRING": "integer"
-											}
-										}
-									},
-									{
-										"Name": "LedgerAccountNumber",
-										"Description": "The unique identifier of a Ledger Account.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "LedgerAccountNumber"
-										},
-										"OriginDataTypeName": {
-											"TypeName": "string",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Length": 16,
-											"Properties": {
-												"HIVE_TYPE_STRING": "string"
-											}
-										}
-									},
-									{
-										"Name": "CustomerNote",
-										"Description": "A note, comment or additional information regarding the Customer.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "CustomerNote"
-										},
-										"OriginDataTypeName": {
-											"TypeName": "string",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Length": 1024,
-											"Properties": {
-												"HIVE_TYPE_STRING": "string"
-											}
-										}
-									},
-									{
-										"Name": "PartyId",
-										"Description": "The unique identifier of a Party.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "PartyId"
-										},
-										"OriginDataTypeName": {
-											"TypeName": "long",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Properties": {
-												"HIVE_TYPE_STRING": "long"
-											}
-										}
-									},
-									{
-										"Name": "GlobalLocationNumber",
-										"Description": "The Global Location Number (GLN) is a simple tool used to uniquely identify locations. It can be used to identify physical locations such as a warehouse, legal entities, or a function / department within a legal entity. The GLN is part of the GS1 system of standards.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "GlobalLocationNumber"
-										},
-										"OriginDataTypeName": {
-											"TypeName": "decimal",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Precision": 13,
-											"Scale": 0,
-											"Properties": {
-												"HIVE_TYPE_STRING": "decimal"
-											}
-										}
-									}
-								],
-								"Format": {
-									"InputFormat": "org.apache.hadoop.mapred.SequenceFileInputFormat",
-									"OutputFormat": "org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat",
-									"FormatType": "csv",
-									"SerializeLib": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
-									"Properties": {
-										"path": "abfss://lake-database@bryanyblob.dfs.core.windows.net/Customer",
-										"delimiter": ",",
-										"multiLine": "false",
-										"firstRowAsHeader": "false",
-										"serialization.format": "1",
-										"escape": "\\",
-										"quote": "\"",
-										"FormatTypeSetToDatabaseDefault": true,
-										"header": "false"
-									}
-								},
-								"Source": {
-									"Provider": "ADLS",
-									"Location": "abfss://lake-database@bryanyblob.dfs.core.windows.net/Customer",
-									"Properties": {
-										"LinkedServiceName": "Linked_bryanyblob",
-										"LocationSetToDatabaseDefault": true
-									}
-								},
-								"Properties": {
-									"textinputformat.record.delimiter": ",",
-									"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
-									"derivedModelAttributeInfo": "{\"attributeReferences\":{\"CustomerId\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"CustomerId\"},\"CustomerEstablishedDate\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"CustomerEstablishedDate\"},\"CustomerTypeId\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"CustomerTypeId\"},\"ResponsibilityCenterId\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"ResponsibilityCenterId\"},\"LedgerId\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"LedgerId\"},\"LedgerAccountNumber\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"LedgerAccountNumber\"},\"CustomerNote\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"CustomerNote\"},\"PartyId\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"PartyId\"},\"GlobalLocationNumber\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"GlobalLocationNumber\"}}}"
-								},
-								"Compressed": false,
-								"IsStoredAsSubdirectories": false
-							},
-							"Properties": {
-								"DerivedModelEntityInfo": "{\"entityDirectives\":{\"baseEntityReference\":{\"name\":\"Customer\",\"path\":\"Customer.cdm.json/Customer\"},\"description\":\"A customer is an individual or legal entity that has or has purchased a product or service.\\n\\nA potential customer is an individual or legal entity that has the desire to acquire a product or service, the financial ability to pay for that product or service and is located in a location in which the product or service can be delivered to them.\\n\\nThe definition of 'customer' is of critical importance for every organization.    \\n\\nIt is the customer that is the focus of product planning, marketing, sales, service, reporting and analytics.    Without 'customer' there would be no need for the organization to exist since its purpose is to serve the customer and profit from that interaction.\\n\\nThe definition of 'customer' must be consistent with how customers exist and interact with the organization in the real world.  An artificial or conceptual definition of 'customer' that is not consistent with these two objectives is doomed to fail because the data will not be consistent with the definition and employees will not accept concepts or terms that are not consistent with what they see, know and how they interact with customers on a working basis.\\n\\nMicrosoft defines 'customer' to meet these objectives.    When we look out into the real world we see two dominant types of customers:  human beings and legal entities.     \\n\\nHuman beings are obviously male and female individuals of various ages, sex, demographics and a variety of similar dimensions that describe and define them who purchase products, good and services.    \\n\\nLegal entities are those legally-defined entities such as corporations, partnerships, non-profit organizations, government organizations etc. that purchase products, goods and services.\\n\\nThis view of 'customer' is consistent with the real world and consistent with how employees view and interact with customers.\\n\\nOf course, that is just the start of identifying, defining and understanding each type of 'customer'.     There is a great deal of detail, complexity and related data that can be used to define each type of customer to various levels of detail and different dimensions of information.\\n\\nMicrosoft implements these detailed concepts and related data via two distinct business area models that expand the coverage and complexity of each type of customer:\\n\\n-  INDIVIDUAL CUSTOMER Business Area Model\\n-  LEGAL ENTITY CUSTOMER Business Area Model\\n\\nNote:\\nEach of the Microsoft models - enterprise, business area or data warehouse - have a representative level of detail for the appropriate type of customer, which is a 'subset' of the total data available in the associated INDIVIDUAL CUSTOMER or LEGAL ENTITY CUSTOMER business area models..   Reference either of those models to expand the coverage or level of detail in each respective data model.\\n\\nThe actual customer implemented in each model depends upon the dominant use of customer for that industry.     \\n\\nFor example, in the pharmaceutical industry the customer is a legal entity, which represents another corporation, company, government organization etc. that purchases the pharmaceutical product and then distributes that product to the end-customer, which is an individual in a retail environment or a government-distribution scheme.    \\n\\nFor this example, the pharmaceutical models will have the legal entity customer represented but not the individual 'end customer' since that is represented in the appropriate retail industry models, which are a different offering.     \\n\\nOf course, the entire set of data available for a legal entity customer is contained in the associated LEGAL ENTITY CUSTOMER Business Area Model.   Reference the LEGAL ENTITY CUSTOMER Business Area Model to incorporate additional data that may be of relevance.\\n\\nIn many industries both types of customers are represented since a legal entity or individual can purchase products, goods or services and enter into contracts.    For these industries, both types of customers are represented by some of the more significant or relevant data derived from the associated LEGAL ENTITY or INDIVIDUAL CUSTOMER business area models.   These models can be used to expand the scope or level of detail in any of the enterprise, business area or data warehouse models.\",\"primaryKey\":[\"CustomerId\"],\"projectionInfo\":{\"attributes\":[{\"type\":\"Existing\",\"attributeReference\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"CustomerId\"},\"dataType\":\"long\",\"description\":\"The unique identifier of a Customer.\",\"isNullable\":false,\"name\":\"CustomerId\"},{\"type\":\"Existing\",\"attributeReference\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"CustomerEstablishedDate\"},\"dataType\":\"date\",\"dateFormat\":\"YYYY-MM-DD\",\"description\":\"The date that the Customer relationship was established.\",\"isNullable\":true,\"name\":\"CustomerEstablishedDate\"},{\"type\":\"Existing\",\"attributeReference\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"CustomerTypeId\"},\"dataType\":\"integer\",\"description\":\"The unique identifier of a Customer Type.\",\"isNullable\":true,\"name\":\"CustomerTypeId\"},{\"type\":\"Existing\",\"attributeReference\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"ResponsibilityCenterId\"},\"dataType\":\"integer\",\"description\":\"The unique identifier of a Responsibility Center.\",\"isNullable\":true,\"name\":\"ResponsibilityCenterId\"},{\"type\":\"Existing\",\"attributeReference\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"LedgerId\"},\"dataType\":\"integer\",\"description\":\"The unique identifier of a Ledger.\",\"isNullable\":true,\"name\":\"LedgerId\"},{\"type\":\"Existing\",\"attributeReference\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"LedgerAccountNumber\"},\"dataType\":\"string\",\"dataTypeLength\":16,\"description\":\"The unique identifier of a Ledger Account.\",\"isNullable\":true,\"name\":\"LedgerAccountNumber\"},{\"type\":\"Existing\",\"attributeReference\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"CustomerNote\"},\"dataType\":\"string\",\"dataTypeLength\":1024,\"description\":\"A note, comment or additional information regarding the Customer.\",\"isNullable\":true,\"name\":\"CustomerNote\"},{\"type\":\"Existing\",\"attributeReference\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"PartyId\"},\"dataType\":\"long\",\"description\":\"The unique identifier of a Party.\",\"isNullable\":true,\"name\":\"PartyId\"},{\"type\":\"Existing\",\"attributeReference\":{\"entity\":\"Customer.cdm.json/Customer\",\"name\":\"GlobalLocationNumber\"},\"dataType\":\"decimal\",\"dataTypeLength\":13,\"description\":\"The Global Location Number (GLN) is a simple tool used to uniquely identify locations. It can be used to identify physical locations such as a warehouse, legal entities, or a function / department within a legal entity. The GLN is part of the GS1 system of standards.\",\"isNullable\":true,\"scale\":0,\"name\":\"GlobalLocationNumber\"}]}}}",
-								"Description": "A customer is an individual or legal entity that has or has purchased a product or service.\n\nA potential customer is an individual or legal entity that has the desire to acquire a product or service, the financial ability to pay for that product or service and is located in a location in which the product or service can be delivered to them.\n\nThe definition of 'customer' is of critical importance for every organization.    \n\nIt is the customer that is the focus of product planning, marketing, sales, service, reporting and analytics.    Without 'customer' there would be no need for the organization to exist since its purpose is to serve the customer and profit from that interaction.\n\nThe definition of 'customer' must be consistent with how customers exist and interact with the organization in the real world.  An artificial or conceptual definition of 'customer' that is not consistent with these two objectives is doomed to fail because the data will not be consistent with the definition and employees will not accept concepts or terms that are not consistent with what they see, know and how they interact with customers on a working basis.\n\nMicrosoft defines 'customer' to meet these objectives.    When we look out into the real world we see two dominant types of customers:  human beings and legal entities.     \n\nHuman beings are obviously male and female individuals of various ages, sex, demographics and a variety of similar dimensions that describe and define them who purchase products, good and services.    \n\nLegal entities are those legally-defined entities such as corporations, partnerships, non-profit organizations, government organizations etc. that purchase products, goods and services.\n\nThis view of 'customer' is consistent with the real world and consistent with how employees view and interact with customers.\n\nOf course, that is just the start of identifying, defining and understanding each type of 'customer'.     There is a great deal of detail, complexity and related data that can be used to define each type of customer to various levels of detail and different dimensions of information.\n\nMicrosoft implements these detailed concepts and related data via two distinct business area models that expand the coverage and complexity of each type of customer:\n\n-  INDIVIDUAL CUSTOMER Business Area Model\n-  LEGAL ENTITY CUSTOMER Business Area Model\n\nNote:\nEach of the Microsoft models - enterprise, business area or data warehouse - have a representative level of detail for the appropriate type of customer, which is a 'subset' of the total data available in the associated INDIVIDUAL CUSTOMER or LEGAL ENTITY CUSTOMER business area models..   Reference either of those models to expand the coverage or level of detail in each respective data model.\n\nThe actual customer implemented in each model depends upon the dominant use of customer for that industry.     \n\nFor example, in the pharmaceutical industry the customer is a legal entity, which represents another corporation, company, government organization etc. that purchases the pharmaceutical product and then distributes that product to the end-customer, which is an individual in a retail environment or a government-distribution scheme.    \n\nFor this example, the pharmaceutical models will have the legal entity customer represented but not the individual 'end customer' since that is represented in the appropriate retail industry models, which are a different offering.     \n\nOf course, the entire set of data available for a legal entity customer is contained in the associated LEGAL ENTITY CUSTOMER Business Area Model.   Reference the LEGAL ENTITY CUSTOMER Business Area Model to incorporate additional data that may be of relevance.\n\nIn many industries both types of customers are represented since a legal entity or individual can purchase products, goods or services and enter into contracts.    For these industries, both types of customers are represented by some of the more significant or relevant data derived from the associated LEGAL ENTITY or INDIVIDUAL CUSTOMER business area models.   These models can be used to expand the scope or level of detail in any of the enterprise, business area or data warehouse models.",
-								"DisplayFolderInfo": "{\"name\":\"Customer\",\"colorCode\":\"#E3008C\"}",
-								"PrimaryKeys": "CustomerId",
-								"spark.sql.sources.provider": "csv"
-							},
-							"Retention": 0,
-							"Temporary": false,
-							"IsRewriteEnabled": false
-						},
-						"Source": {
-							"Type": "SPARK"
-						}
-					}
-				]
-			},
 			"dependsOn": []
 		}
 	]
