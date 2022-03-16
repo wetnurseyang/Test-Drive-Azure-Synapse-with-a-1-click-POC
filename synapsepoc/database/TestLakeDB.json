@@ -1,0 +1,22 @@
+{
+	"name": "TestLakeDB",
+	"properties": {
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"Properties": {
+			"IsSyMSCDMDatabase": true
+		},
+		"Name": "TestLakeDB",
+		"EntityType": "DATABASE",
+		"Source": {
+			"Provider": "ADLS",
+			"Location": "abfss://lake-database@bryanyblob.dfs.core.windows.net/",
+			"Properties": {
+				"FormatType": "csv",
+				"LinkedServiceName": "Linked_bryanyblob"
+			}
+		}
+	},
+	"type": "DATABASE"
+}
