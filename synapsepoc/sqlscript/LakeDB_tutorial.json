@@ -1,13 +1,13 @@
 {
-	"name": "SQL script 2",
+	"name": "LakeDB_tutorial",
 	"properties": {
 		"content": {
-			"query": "SELECT TOP (100) [Book_Id]\n,[ISBN]\n,[ISBN13]\n,[Title]\n,[Author]\n,[Author_l-f]\n,[Additional_Authors]\n,[Average_Rating]\n,[Publisher]\n,[Binding]\n,[Number_of_Pages]\n,[Year_Published]\n,[Original_Publication_Year]\n FROM [default].[dbo].[books]",
+			"query": "CREATE DATABASE Ldw COLLATE Latin1_General_100_BIN2_UTF8;\n\n--CREATE EXTERNAL DATA SOURCE ecdc_cases WITH (\n--    LOCATION = 'https://pandemicdatalake.blob.core.windows.net/public/curated/covid-19/ecdc_cases/'\n--);\n\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'bryany=1234567890';\n\nCREATE DATABASE SCOPED CREDENTIAL WorkspaceIdentity\nWITH IDENTITY = 'Managed Identity';\nGO\n\nCREATE EXTERNAL DATA SOURCE ecdc_cases WITH (\n    LOCATION = 'https://pandemicdatalake.blob.core.windows.net/public/curated/covid-19/ecdc_cases/',\n    CREDENTIAL = WorkspaceIdentity\n);\n\nCREATE EXTERNAL FILE FORMAT ParquetFormat WITH (  FORMAT_TYPE = PARQUET );\nGO\nCREATE EXTERNAL FILE FORMAT CsvFormat WITH (  FORMAT_TYPE = DELIMITEDTEXT );\nGO\n\ncreate schema ecdc_adls;\n\ncreate external table ecdc_adls.cases (\n    date_rep                   date,\n    day                        smallint,\n    month                      smallint,\n    year                       smallint,\n    cases                      smallint,\n    deaths                     smallint,\n    countries_and_territories  varchar(256),\n    geo_id                     varchar(60),\n    country_territory_code     varchar(16),\n    pop_data_2018              int,\n    continent_exp              varchar(32),\n    load_date                  datetime2(7),\n    iso_country                varchar(16)\n) with (\n    data_source= ecdc_cases,\n    location = 'latest/ecdc_cases.parquet',\n    file_format = ParquetFormat\n);\n\n",
 			"metadata": {
 				"language": "sql"
 			},
 			"currentConnection": {
-				"databaseName": "default",
+				"databaseName": "Ldw",
 				"poolName": "Built-in"
 			},
 			"resultLimit": 5000
