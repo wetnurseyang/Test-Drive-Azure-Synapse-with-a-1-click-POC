@@ -1333,7 +1333,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "-- explore CSV\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://bryiwqal2hbjzaoupoc.dfs.core.windows.net/public/trip-data.csv',\n        FORMAT = 'CSV',\n        HEADER_ROW=TRUE,\n        PARSER_VERSION = '2.0'\n    ) AS [result]\n\n\n    \n",
+					"query": "-- explore CSV\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://bryiwqal2hbjzaoupoc.dfs.core.windows.net/public/trip-data.csv',\n        FORMAT = 'CSV',\n        HEADER_ROW=TRUE,\n        PARSER_VERSION = '2.0'\n    ) AS [result]\n\n-- explore parquet\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://bryanyblob.dfs.core.windows.net/test/output.parquet',\n        FORMAT = 'PARQUET'\n    ) AS [result]\n\n",
 					"metadata": {
 						"language": "sql"
 					},
