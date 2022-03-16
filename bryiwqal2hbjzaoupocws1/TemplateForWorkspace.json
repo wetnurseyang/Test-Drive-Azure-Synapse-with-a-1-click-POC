@@ -1348,6 +1348,26 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/LakeDB_tutorial')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE DATABASE Ldw COLLATE Latin1_General_100_BIN2_UTF8;\n\n--CREATE EXTERNAL DATA SOURCE ecdc_cases WITH (\n--    LOCATION = 'https://pandemicdatalake.blob.core.windows.net/public/curated/covid-19/ecdc_cases/'\n--);\n\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'bryany=1234567890';\n\nCREATE DATABASE SCOPED CREDENTIAL WorkspaceIdentity\nWITH IDENTITY = 'Managed Identity';\nGO\n\nCREATE EXTERNAL DATA SOURCE ecdc_cases WITH (\n    LOCATION = 'https://pandemicdatalake.blob.core.windows.net/public/curated/covid-19/ecdc_cases/',\n    CREDENTIAL = WorkspaceIdentity\n);\n\nCREATE EXTERNAL FILE FORMAT ParquetFormat WITH (  FORMAT_TYPE = PARQUET );\nGO\nCREATE EXTERNAL FILE FORMAT CsvFormat WITH (  FORMAT_TYPE = DELIMITEDTEXT );\nGO\n\ncreate schema ecdc_adls;\n\ncreate external table ecdc_adls.cases (\n    date_rep                   date,\n    day                        smallint,\n    month                      smallint,\n    year                       smallint,\n    cases                      smallint,\n    deaths                     smallint,\n    countries_and_territories  varchar(256),\n    geo_id                     varchar(60),\n    country_territory_code     varchar(16),\n    pop_data_2018              int,\n    continent_exp              varchar(32),\n    load_date                  datetime2(7),\n    iso_country                varchar(16)\n) with (\n    data_source= ecdc_cases,\n    location = 'latest/ecdc_cases.parquet',\n    file_format = ParquetFormat\n);\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "Ldw",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Polybase_BulkLoad')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
@@ -1360,26 +1380,6 @@
 					"currentConnection": {
 						"databaseName": "bryiwqal2hbjzaoupocws1p1",
 						"poolName": "bryiwqal2hbjzaoupocws1p1"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/SQL script 2')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"content": {
-					"query": "SELECT TOP (100) [Book_Id]\n,[ISBN]\n,[ISBN13]\n,[Title]\n,[Author]\n,[Author_l-f]\n,[Additional_Authors]\n,[Average_Rating]\n,[Publisher]\n,[Binding]\n,[Number_of_Pages]\n,[Year_Published]\n,[Original_Publication_Year]\n FROM [default].[dbo].[books]",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "default",
-						"poolName": "Built-in"
 					},
 					"resultLimit": 5000
 				},
@@ -1868,10 +1868,6 @@
 									{
 										"Name": "CustomerId",
 										"Description": "The unique identifier of a Customer.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "CustomerId"
-										},
 										"OriginDataTypeName": {
 											"TypeName": "long",
 											"IsComplexType": false,
@@ -1879,15 +1875,15 @@
 											"Properties": {
 												"HIVE_TYPE_STRING": "long"
 											}
+										},
+										"BaseAttributeReference": {
+											"Entity": "Customer.cdm.json/Customer",
+											"Name": "CustomerId"
 										}
 									},
 									{
 										"Name": "CustomerEstablishedDate",
 										"Description": "The date that the Customer relationship was established.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "CustomerEstablishedDate"
-										},
 										"OriginDataTypeName": {
 											"TypeName": "date",
 											"IsComplexType": false,
@@ -1896,15 +1892,15 @@
 												"DateFormat": "YYYY-MM-DD",
 												"HIVE_TYPE_STRING": "date"
 											}
+										},
+										"BaseAttributeReference": {
+											"Entity": "Customer.cdm.json/Customer",
+											"Name": "CustomerEstablishedDate"
 										}
 									},
 									{
 										"Name": "CustomerTypeId",
 										"Description": "The unique identifier of a Customer Type.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "CustomerTypeId"
-										},
 										"OriginDataTypeName": {
 											"TypeName": "integer",
 											"IsComplexType": false,
@@ -1912,15 +1908,15 @@
 											"Properties": {
 												"HIVE_TYPE_STRING": "integer"
 											}
+										},
+										"BaseAttributeReference": {
+											"Entity": "Customer.cdm.json/Customer",
+											"Name": "CustomerTypeId"
 										}
 									},
 									{
 										"Name": "ResponsibilityCenterId",
 										"Description": "The unique identifier of a Responsibility Center.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "ResponsibilityCenterId"
-										},
 										"OriginDataTypeName": {
 											"TypeName": "integer",
 											"IsComplexType": false,
@@ -1928,15 +1924,15 @@
 											"Properties": {
 												"HIVE_TYPE_STRING": "integer"
 											}
+										},
+										"BaseAttributeReference": {
+											"Entity": "Customer.cdm.json/Customer",
+											"Name": "ResponsibilityCenterId"
 										}
 									},
 									{
 										"Name": "LedgerId",
 										"Description": "The unique identifier of a Ledger.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "LedgerId"
-										},
 										"OriginDataTypeName": {
 											"TypeName": "integer",
 											"IsComplexType": false,
@@ -1944,15 +1940,15 @@
 											"Properties": {
 												"HIVE_TYPE_STRING": "integer"
 											}
+										},
+										"BaseAttributeReference": {
+											"Entity": "Customer.cdm.json/Customer",
+											"Name": "LedgerId"
 										}
 									},
 									{
 										"Name": "LedgerAccountNumber",
 										"Description": "The unique identifier of a Ledger Account.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "LedgerAccountNumber"
-										},
 										"OriginDataTypeName": {
 											"TypeName": "string",
 											"IsComplexType": false,
@@ -1961,15 +1957,15 @@
 											"Properties": {
 												"HIVE_TYPE_STRING": "string"
 											}
+										},
+										"BaseAttributeReference": {
+											"Entity": "Customer.cdm.json/Customer",
+											"Name": "LedgerAccountNumber"
 										}
 									},
 									{
 										"Name": "CustomerNote",
 										"Description": "A note, comment or additional information regarding the Customer.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "CustomerNote"
-										},
 										"OriginDataTypeName": {
 											"TypeName": "string",
 											"IsComplexType": false,
@@ -1978,15 +1974,15 @@
 											"Properties": {
 												"HIVE_TYPE_STRING": "string"
 											}
+										},
+										"BaseAttributeReference": {
+											"Entity": "Customer.cdm.json/Customer",
+											"Name": "CustomerNote"
 										}
 									},
 									{
 										"Name": "PartyId",
 										"Description": "The unique identifier of a Party.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "PartyId"
-										},
 										"OriginDataTypeName": {
 											"TypeName": "long",
 											"IsComplexType": false,
@@ -1994,15 +1990,15 @@
 											"Properties": {
 												"HIVE_TYPE_STRING": "long"
 											}
+										},
+										"BaseAttributeReference": {
+											"Entity": "Customer.cdm.json/Customer",
+											"Name": "PartyId"
 										}
 									},
 									{
 										"Name": "GlobalLocationNumber",
 										"Description": "The Global Location Number (GLN) is a simple tool used to uniquely identify locations. It can be used to identify physical locations such as a warehouse, legal entities, or a function / department within a legal entity. The GLN is part of the GS1 system of standards.",
-										"BaseAttributeReference": {
-											"Entity": "Customer.cdm.json/Customer",
-											"Name": "GlobalLocationNumber"
-										},
 										"OriginDataTypeName": {
 											"TypeName": "decimal",
 											"IsComplexType": false,
@@ -2012,6 +2008,10 @@
 											"Properties": {
 												"HIVE_TYPE_STRING": "decimal"
 											}
+										},
+										"BaseAttributeReference": {
+											"Entity": "Customer.cdm.json/Customer",
+											"Name": "GlobalLocationNumber"
 										}
 									}
 								],
@@ -2023,8 +2023,8 @@
 									"Properties": {
 										"path": "abfss://test@bryanyblob.dfs.core.windows.net/LakeDatabase/Customer",
 										"delimiter": ",",
-										"multiLine": "false",
 										"firstRowAsHeader": "false",
+										"multiLine": "false",
 										"serialization.format": "1",
 										"escape": "\\",
 										"quote": "\"",
