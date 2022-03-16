@@ -5,7 +5,8 @@
 			"Type": "SPARK"
 		},
 		"Properties": {
-			"IsSyMSCDMDatabase": true
+			"IsSyMSCDMDatabase": true,
+			"DerivedModelDBInfo": "{\"ModelDirectives\":{\"BaseModel\":{\"Name\":\"Retail\",\"Version\":\"0.1.0\"}}}"
 		},
 		"Name": "TestLakeDB",
 		"EntityType": "DATABASE",
