@@ -1,0 +1,17 @@
+{
+	"name": "Cleanup-tables",
+	"properties": {
+		"content": {
+			"query": "\n drop table [tripFares].[AggregateTaxiData]\n\n drop table dbo.FaresData\n\ndrop table dbo.TripsData",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "bryiwqal2hbjzaoupocws1p1",
+				"poolName": "bryiwqal2hbjzaoupocws1p1"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
